@@ -1,0 +1,124 @@
+<div class="test-app">
+  <header class="test-header">
+    <h1>Опрос</h1>
+    <p class="subtitle" *ngIf="phase !== 'results'">Оцените каждое из утверждений</p>
+  </header>
+
+  <section class="card intro-card" *ngIf="phase === 'intro'">
+    <p class="intro-text">
+      Поставьте напротив каждой фразы соответствующую цифру:
+    </p>
+
+    <ul class="scale-list">
+      <li><span class="scale-badge">4</span> — лучше всего характеризует вас</li>
+      <li><span class="scale-badge">3</span> — лучшая характеристика из оставшихся</li>
+      <li><span class="scale-badge">2</span> — характеристика, занимающая третье место</li>
+      <li><span class="scale-badge">1</span> — менее всего подходит вам</li>
+    </ul>
+
+    <p class="hint">
+      В каждом вопросе используйте все четыре цифры: 4, 3, 2 и 1 — по одному разу.
+    </p>
+
+    <button type="button" class="btn btn-primary" (click)="startTest()">
+      Начать
+    </button>
+  </section>
+
+  <section class="card question-card" *ngIf="phase === 'questions'">
+    <div class="progress-wrap" aria-hidden="true">
+      <div class="progress-bar">
+        <div class="progress-fill" [style.width.%]="progressPercent"></div>
+      </div>
+      <span class="progress-label">
+        Вопрос {{ currentQuestionIndex + 1 }} из {{ questions.length }}
+      </span>
+    </div>
+
+    <h2 class="question-title">
+      {{ currentQuestionIndex + 1 }}. {{ currentQuestion.prompt }}
+    </h2>
+
+    <div class="options-list">
+      <article
+        class="option-row"
+        *ngFor="let option of currentQuestion.options"
+        [class.option-row--selected]="getRank(option.system) !== null"
+      >
+        <p class="option-text">{{ option.text }}</p>
+
+        <div class="rank-group" role="group" [attr.aria-label]="option.text">
+          <button
+            type="button"
+            class="rank-btn"
+            *ngFor="let rank of ranks"
+            [class.rank-btn--active]="getRank(option.system) === rank"
+            [class.rank-btn--taken]="isRankTaken(rank, option.system)"
+            [attr.aria-pressed]="getRank(option.system) === rank"
+            (click)="setRank(option.system, rank)"
+          >
+            {{ rank }}
+          </button>
+        </div>
+      </article>
+    </div>
+
+    <p class="validation" *ngIf="!isCurrentQuestionComplete">
+      Выберите все четыре цифры, каждую — один раз.
+    </p>
+
+    <div class="actions">
+      <button
+        type="button"
+        class="btn btn-secondary"
+        (click)="goBack()"
+        [disabled]="!canGoBack"
+      >
+        Назад
+      </button>
+
+      <button
+        type="button"
+        class="btn btn-primary"
+        (click)="goNext()"
+        [disabled]="!isCurrentQuestionComplete"
+      >
+        {{ isLastQuestion ? 'Завершить' : 'Далее' }}
+      </button>
+    </div>
+  </section>
+
+  <section class="card results-card" *ngIf="phase === 'results' && results">
+    <h2 class="results-title">Ваши ответы</h2>
+
+    <div class="results-block" *ngFor="let question of questions">
+      <h3>{{ question.id }}. {{ question.prompt }}</h3>
+
+      <ul class="result-list">
+        <li *ngFor="let option of question.options">
+          <span class="result-rank">
+            {{ results.answers[question.id - 1].ranks[option.system] }}
+          </span>
+          <span class="result-text">{{ option.text }}</span>
+        </li>
+      </ul>
+    </div>
+
+    <div class="compact-results" id="screenshot-data">
+      <h3>Сводка</h3>
+      <p class="compact-note">Цифры указаны в порядке утверждений в каждом вопросе.</p>
+      <ul class="compact-list">
+        <li *ngFor="let question of questions">
+          <span class="compact-label">Вопрос {{ question.id }}:</span>
+          <span class="compact-values">{{ getCompactLine(question.id) }}</span>
+        </li>
+      </ul>
+    </div>
+
+    <p class="screenshot-message">Отправьте скриншот Яше</p>
+
+    <button type="button" class="btn btn-secondary" (click)="restartTest()">
+      Пройти заново
+    </button>
+  </section>
+</div>
