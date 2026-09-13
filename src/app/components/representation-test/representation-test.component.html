@@ -45,7 +45,12 @@
         *ngFor="let option of currentQuestion.options"
         [class.option-row--selected]="getRank(option.system) !== null"
       >
-        <p class="option-text">{{ option.text }}</p>
+        <div class="option-header">
+          <p class="option-text">{{ option.text }}</p>
+          <span class="option-selected-rank" *ngIf="getRank(option.system) as selectedRank">
+            {{ selectedRank }}
+          </span>
+        </div>
 
         <div class="rank-group" role="group" [attr.aria-label]="option.text">
           <button
@@ -53,9 +58,8 @@
             class="rank-btn"
             *ngFor="let rank of ranks"
             [class.rank-btn--active]="getRank(option.system) === rank"
-            [class.rank-btn--taken]="isRankTaken(rank, option.system)"
             [attr.aria-pressed]="getRank(option.system) === rank"
-            (click)="setRank(option.system, rank)"
+            (click)="setRank(option.system, rank, $event)"
           >
             {{ rank }}
           </button>

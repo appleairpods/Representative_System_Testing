@@ -67,7 +67,7 @@ export class RepresentationTestComponent {
     return this.answers[this.currentQuestionIndex].ranks[system];
   }
 
-  setRank(system: RepresentationalSystem, rank: number): void {
+  setRank(system: RepresentationalSystem, rank: number, event?: Event): void {
     const currentRanks = this.answers[this.currentQuestionIndex].ranks;
     const previousSystem = SYSTEMS.find(key => currentRanks[key] === rank);
 
@@ -76,12 +76,11 @@ export class RepresentationTestComponent {
     }
 
     currentRanks[system] = rank;
-  }
 
-  isRankTaken(rank: number, system: RepresentationalSystem): boolean {
-    const currentRanks = this.answers[this.currentQuestionIndex].ranks;
-    const owner = SYSTEMS.find(key => currentRanks[key] === rank);
-    return owner !== undefined && owner !== system;
+    const button = event?.currentTarget;
+    if (button instanceof HTMLButtonElement) {
+      button.blur();
+    }
   }
 
   goBack(): void {
