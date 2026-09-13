@@ -27,6 +27,7 @@
           },
           "configurations": {
             "production": {
+              "baseHref": "/Representative_System_Testing/",
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,

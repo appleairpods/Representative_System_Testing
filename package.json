@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "scripts": {
     "start": "ng serve",
-  "test:e2e": "playwright test",
+    "build:pages": "ng build --configuration production",
+    "test:e2e": "playwright test",
   "test:e2e:ui": "playwright test --ui",
   "test:e2e:report": "playwright show-report"
   },
